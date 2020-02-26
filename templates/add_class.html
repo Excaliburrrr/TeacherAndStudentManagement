@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+</head>
+<body>
+    <form action="/add-class/" method="post">
+        <div class="nav">
+            <a href="/navi/" methods="GET">主页</a>
+            <a href="/add-student/" methods="GET">添加学生</a>
+            <a href="/add-teacher/" methods="GET">添加教师</a>
+            <a href="/add-class/" methods="GET">添加班级</a>
+            <a href="/student/" methods="GET">学生信息</a>
+            <a href="/teacher/" methods="GET">教师信息</a>
+            <a href="/class/" methods="GET">班级信息</a>
+        </div>
+        <div>
+            <span>班级名: </span>
+            <span><input type="text" name="name"/></span>
+        </div>
+        <div>
+            <span>班主任工号: </span>
+            <span><input type="text" name="teacher_id"/></span>
+        </div>
+        <div>
+            <span><input type="submit" value="提交" /></span>
+            <span><input type="reset" value="重置" /></span>
+        </div>
+    </form>
+</body>
+</html>

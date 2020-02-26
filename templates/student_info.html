@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>导航栏</title>
+    <link rel="stylesheet" href="/static/style.css"/>
+    <link rel="stylesheet" href="/static/plugin/bootstrap-3.3.7-dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/static/plugin/font-awesome-4.7.0/css/font-awesome.css" />
+</head>
+<body>
+<!--导航栏-->
+    <div class="nav">
+        <a href="/navi/" methods="GET">主页</a>
+        <a href="/add-student/" methods="GET">添加学生</a>
+        <a href="/add-teacher/" methods="GET">添加教师</a>
+        <a href="/add-class/" methods="GET">添加班级</a>
+        <a href="/student/" methods="GET">学生信息</a>
+        <a href="/teacher/" methods="GET">教师信息</a>
+        <a href="/class/" methods="GET">班级信息</a>
+    </div>
+    <div>
+        <h1>学生信息</h1>
+    </div>
+    <div class="add_button">
+        <button type="button" class="btn btn-default" id="add_stu"> 添加学生 </button>
+    </div>
+
+    <div class="modal fade" id="addStuModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">添加学生</h4>
+                </div>
+                <div class="modal-body">
+                    <p> 姓名: <input type="text" id="stu_name" name="stu_name"></p>
+                    <p> 学号: <input type="text" id="stu_id" name="stu_id"></p>
+                    <p> 班级:
+                        <select id="class_name" name="class_name">
+                            {% for item in classes %}
+                                <option value="{{item.name}}">{{item.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="ajax_add_submit">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="modal fade" id="editStuModal" tabindex="-1" role="dialog" aria-labelledby="editStuLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editStuLabel">编辑学生信息</h4>
+                </div>
+                <div class="modal-body">
+                    <p> 姓名: <input type="text" id="new_stu_name" name="stu_name"></p>
+                    <p> 班级:
+                        <select id="new_class_id" name="class_id">
+                            {% for item in classes %}
+                            <option value="{{item.id}}">{{item.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </p>
+                    <input type="text" style="display: none" name="cur_stu_id" id="cur_stu_id" />
+                    <input type="text" style="display: none" name="cur_id" id="cur_id" />
+                    <span id="edit_error_msg"></span>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="ajax_edit_submit">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped table-condensed table-hover" >
+            <thead>
+                <tr>
+                    <th>序号</th>
+                    <th>姓名</th>
+                    <th>学号</th>
+                    <th>班级</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in content %}
+                <tr>
+                    <td>{{item.id}}</td>
+                    <td>{{item.name}}</td>
+                    <td>{{item.student_id}}</td>
+                    <td>{{item.class_name}}</td>
+                    <td style="display: none">{{item.class_id}}</td>
+                    <td>
+                        <a href="/del-student/?nid={{item.id}}" class="del">(url)删除</a>
+                        |
+                    <!-- 注意这里的href后面如果有指定链接，
+                    则在执行完onclick指定的JS函数后，会跳转到href指定的页面，这是一个默认事件
+                    如果需要阻止默认事件发生，需要在JS函数前加上 return 关键字，
+                    并在函数体内 return false-->
+                        <a class="ajax_del del" >(ajax)删除</a>
+                        |
+                        <a href="/edit-student/?nid={{item.id}}" class="edit">(url)编辑</a>
+                        |
+                        <a href="/edit-student/?nid={{item.id}}" class="model_edit">(ajax)编辑</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="shadow" class="shadow hide"></div>
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script src="/static/plugin/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    <script>
+        $(function () {
+            bindAddStu();
+            bindAjaxAddSubmit();
+            bindAjaxEdit();
+            bindAjaxEditSubmit();
+            bindAjaxDel();
+        });
+        function bindAddStu(){
+            // $('#add_stu').click(function () {
+            //     document.getElementById("shadow").classList.remove("hide");
+            //     document.getElementById("add_model").classList.remove("hide");
+            // });
+            $('#add_stu').click(function(){
+                $('#addStuModal').modal({
+                    keyboard: false,
+                });
+            });
+        }
+        function bindAjaxDel() {
+            $('.ajax_del').click(function () {
+                var row = $(this).parent().prevAll();
+                $.ajax({
+                    url: "/model-del-student/",
+                    type: 'GET',
+                    data: {
+                        'nid':$(row[4]).text(),
+                    },
+                    dataType: "json",
+                    success: function (data) {
+                        if (data.status){
+                            alert("删除成功");
+                            location.reload(); // location.href = "/student/"
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    }
+                })
+            })
+        }
+        function bindAjaxAddSubmit() {
+            $('#ajax_add_submit').click(function () {
+                $.ajax({
+                    url: "/model-add-student/",
+                    type: "POST",
+                    data: {
+                        'name': $('#stu_name').val(),
+                        'student_id': $('#stu_id').val(),
+                        'class_name': $('#class_name').val()
+                    },
+                    success: function (data) {
+                        if (data == 'OK') {
+                            alert("添加成功!");
+                            location.href = "/student/";
+                        } else {
+                            $('#error_msg').text(data);
+                        }
+                    }
+                })
+            });
+        }
+        function bindAjaxEdit(){
+            $(".model_edit").click(function () {
+                var row = $(this).parent().prevAll();
+                var nid = $(row[4]).text();
+                var stu_id = $(row[2]).text();
+                var old_name = $(row[3]).text();
+                var old_class_id = $(row[0]).text();
+                $('#editStuModal').modal({
+                    keyboard: true,
+                });
+                // document.getElementById("shadow").classList.remove("hide");
+                // document.getElementById("edit_model").classList.remove("hide");
+                $('#new_stu_name').val(old_name);
+                $('#cur_id').val(nid);
+                $('#cur_stu_id').val(stu_id);
+                $('#new_class_id option').each(function () {
+                    if ($(this).val() == old_class_id){
+                        $(this).attr("selected", true);
+                    }
+                });
+                return false;
+            });
+        }
+        function bindAjaxEditSubmit(){
+            $('#ajax_edit_submit').click(function () {
+                $.ajax({
+                    url: '/model-edit-student/',
+                    type: 'POST',
+                    data: {
+                        "nid": $('#cur_id').val(),
+                        "student_id": $('#cur_stu_id').val(),
+                        "name": $("#new_stu_name").val(),
+                        "class_id": $("#new_class_id").val()
+                    },
+                    dataType: 'json',
+                    success:function (data) {
+                        if (data.status){
+                            alert("编辑成功");
+                            location.reload();
+                        }
+                        else {
+                            $('#edit_error_msg').text(data.message);
+                        }
+                    }
+                })
+            })
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>教师信息-编辑</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <form action="/edit-class/?nid={{content.id}}" method="post">
+        <div class="nav">
+            <a href="/navi/" methods="GET">主页</a>
+            <a href="/student/" methods="GET">学生信息</a>
+            <a href="/teacher/" methods="GET">教师信息</a>
+            <a href="/class/" methods="GET">班级信息</a>
+            <a href="/center/" methods="GET">个人中心</a>
+        </div>
+        <h1>编辑信息</h1>
+        <div>
+            <span>
+                班级名:
+                <input type="text" name="name" value="{{content.name}}"/>
+            </span>
+                <span>
+                班主任:
+                <input type="text" name="teacher_name" value="{{content.teacher_name}}"/>
+            </span>
+            <span>
+                <input type="submit" value="提交" />
+            </span>
+        </div>
+    </form>
+</body>
+</html>

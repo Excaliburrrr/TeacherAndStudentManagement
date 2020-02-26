@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .pg-header {
+            background: darkcyan;
+            height: 48px;
+        }
+        @media (max-width: 700px) {
+            .pg-header {
+                background: cadetblue;
+                height: 48px;
+            }
+
+        }
+        @media (max-width: 300px) {
+            .pg-header {
+                background: aquamarine;
+                height: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="pg-header"></div>
+<div>Hello World</div>
+    <select class="test"></select>
+<script src="../static/jquery-1.12.4.js" ></script>
+<script>
+    // console.log("23">"200");
+    // // object
+    // var a = new String("hello world!");
+    // // string
+    // a = "hello world!";
+    // console.log(typeof a);
+    // var arr = [1, 2, 3, 4];
+    // // var ret = arr.join(">>");
+    // // console.log(typeof ret);
+    // // console.log(arr.slice(0, 2).toString());
+    // arr.push(1);
+    // console.log(arr);
+    // console.log(arr.pop());
+    // console.log(arr);
+    // var ele = document.getElementsByTagName("div")[0];
+    // ele.style.color = '#cccc';
+    var arg = [{"id":1, "name": "aaaa"}, {"id":2, "name": "bbbb"}, {"id":3, "name": "cccc"}]
+    // $.each(arg, function (i, row) {
+    //     console.log(row.name)
+    // })
+    // 动态生成option
+    $(arg).each(function () {
+        var tag = document.createElement("option");
+        tag.innerHTML = this.name;
+        tag.value = this.id;
+        $(".test").append($(tag));
+    });
+</script>
+</body>
+</html>
