@@ -1,0 +1,81 @@
+body {
+    margin: 0px;
+}
+.left {
+    float: left;
+}
+.right {
+    float: right;
+}
+.pg-header {
+    height: 48px;
+    /*大于1190px时，占100%, 小于1190px时，出现滚动条*/
+    min-width: 1190px;
+    line-height: 48px;
+    background-color: #2b669a;
+}
+.menus {
+    width: 200px;
+    position: absolute;
+    top: 48px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: #2aabd2;
+}
+.table_content {
+    position: absolute;
+    top: 48px;
+    left: 200px;
+    right: 0px;
+    bottom: 0px;
+    /*background-color : #e38d13;*/
+    overflow: auto;
+    z-index: 100;
+}
+.pg-header .logo {
+    font-size: 18px;
+    color: white;
+    width: 200px;
+    text-align: center;
+    border-right: 1px solid #dddddd;
+}
+.pg-header .r-menus a {
+    color: white;
+    padding: 0 10px;
+}
+.pg-header. r-menus a:hover {
+    color: #dff0d8;
+}
+.pg-header .profile {
+    padding: 0px 20px;
+}
+.pg-header .profile img {
+    border-radius: 50%;
+}
+.pg-header .user {
+    color: black;
+    display: None;
+    position: absolute;
+    top: 48px;
+    right:2px;
+    width: 200px;
+    background-color: white;
+    border: 1px black solid;
+    z-index: 1000;
+}
+.pg-header .user {
+    padding: 3px;
+}
+.pg-header .profile:hover .user {
+    display: block;
+}
+.hide {
+    display: None;
+}
+.pg-body .menus a {
+    display: block;
+    padding: 10px 5px ;
+    color: #0f0f0f;
+    border-bottom: 1px solid #dddddd;
+}

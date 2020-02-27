@@ -1,163 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>班级信息</title>
+{% extends "layout.html" %}
+
+{% block css %}
+    <title>班级管理</title>
     <link rel="stylesheet" href="/static/style.css"/>
-</head>
-<body>
-    <div class="nav">
-        <a href="/navi/" methods="GET">主页</a>
-        <a href="/add-student/" methods="GET">添加学生</a>
-        <a href="/add-teacher/" methods="GET">添加教师</a>
-        <a href="/add-class/" methods="GET">添加班级</a>
-        <a href="/student/" methods="GET">学生信息</a>
-        <a href="/teacher/" methods="GET">教师信息</a>
-        <a href="/class/" methods="GET">班级信息</a>
-    </div>
-    <div>
-        <h1>班级信息</h1>
-    </div>
-    <div>
-        <input type="button" onclick="ShowModel();" value="添加">
-    </div>
-    <div>
-        <table class="stu"  width="1200px" cellpadding="0">
+{% endblock %}
+
+{% block modal_add_content %}
+    <p>班级名: <input type="text" id="class_name" name="class_name" /></p>
+    <span id="error_msg"></span>
+{% endblock %}
+
+{% block modal_edit_content %}
+    <span id="class_id" style="display: none"></span>
+    <p>班级名: <input type="text" id="new_class_name" name="new_class_name" /></p>
+    <span id="error_edit_msg"></span>
+{% endblock %}
+
+{% block table_content %}
+    <div class="table-responsive" style="margin: 0 auto; width: 800px">
+        <!--页面标题-->
+        <div>
+            <h1>班级信息</h1>
+        </div>
+
+        <!--添加按钮-->
+        <div class="add_button">
+            <!--        <input type="button" onclick="ShowModel();" value="添加">-->
+            <button type="button" id="addClass" class="btn btn-default">
+                添加班级
+            </button>
+        </div>
+        <table class="table table-striped table-hover table-bordered table-condensed"  width="1200px" cellpadding="0">
             <thead>
-                <tr class="stu_title" align="center">
-                    <th>序号</th>
-                    <th>班级名</th>
-                    <th>操作</th>
-                </tr>
+            <tr>
+                <th>序号</th>
+                <th>班级名</th>
+                <th>操作</th>
+            </tr>
             </thead>
             <tbody>
-                {% for item in content %}
-                <tr class="stu_content" align="center">
+            {% for item in content %}
+                <tr>
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
                     <td>
-                        <a href="/del-class/?nid={{item.id}}" class="del">(url)删除</a>
+                        <a href="/del-class/?nid={{item.id}}" class="del fa fa-trash-o"></a>
                         |
-                        <a onclick="AjaxDel(this)" class="del">(ajax)删除</a>
+                        <a class="del_class fa fa-trash-o"></a>
                         |
-                        <a href="/edit-class/?nid={{item.id}}" class="edit">(url)编辑</a>
+                        <a href="/edit-class/?nid={{item.id}}" class="fa fa-cut"></a>
                         |
-                        <a class="edit" onclick="ShowEditModel(this)">(ajax)编辑</a>
+                        <a class="modal_edit fa fa-edit"></a>
                     </td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
     </div>
-    <div id="shadow" class="shadow hide"></div>
-    <div id="add_model" class="model hide" align="center">
-        <p>班级名: <input type="text" id="class_name" name="class_name" /></p>
-    <!--点击该标签时，执行onclick后面的函数-->
-        <input type="button" value="提交" onclick="AjaxSendAdd();" />
-        <input type="button" value="取消" onclick="Cancel();" />
-        <span id="error_msg"></span>
-    </div>
-    <div id="edit_model" class="model hide" align="center">
-        <span id="class_id"></span>
-        <p>班级名: <input type="text" id="new_class_name" name="new_class_name" /></p>
-        <span><input type="button" value="提交" onclick="AjaxSendEdit()"></span>
-        <span><input type="button" value="取消" onclick="Cancel()"></span>
-        <span id="error_edit_msg"></span>
-    </div>
-    <!--导入jquery-->
-    <script src="/static/jquery-1.12.4.js"></script>
+{% endblock %}
+
+{% block js %}
     <script>
-        function ShowModel(){
-            document.getElementById('shadow').classList.remove('hide');
-            document.getElementById('add_model').classList.remove('hide');
-        }
-        function ShowEditModel(self){
-            // 获取当前行的所有兄弟节点
-            var row = $(self).parent().prevAll();
-            // 改变编辑框的默认值
-            var cls_name= $(row[0]).text();
-            var class_id = $(row[1]).text();
-            document.getElementById('edit_model').classList.remove('hide');
-            document.getElementById('shadow').classList.remove('hide');
-            $('#new_class_name').val(cls_name);
-            $('#class_id').text(class_id);
-        }
-        function Cancel() {
-            document.getElementById('shadow').classList.add('hide');
-            document.getElementById('add_model').classList.add('hide');
-            document.getElementById('shadow').classList.add('hide');
-            document.getElementById('edit_model').classList.add('hide');
-        }
-        function AjaxDel(self) {
-            var row = $(self).parent().prevAll();
-            $.ajax({
-                url:'/model-del-class/',
-                type:'GET',
-                data: {
-                    'nid':$(row[1]).text()
-                },
-                success: function (data) {
-                    if (data == "OK"){
-                        alert("删除成功");
-                        location.reload();
-                    }
-                    else {
-                        alert(data);
-                    }
-
-                }
+        $(function () {
+            bindAddClass();
+            bindEditClass();
+            bindAddSubmit();
+            bindEditSubmit();
+            bindDelClass();
+        });
+        function bindAddClass() {
+            $('#addClass').click(function () {
+                $('#addModal').modal({
+                    keyboard: true,
+                })
             })
-        }
-        function AjaxSendAdd() {
-            $.ajax({
-                // 往哪提交
-                url:'/model-add-class/',
-                // 以什么方式提交
-                type: 'POST',
-                // 提交的数据
-                data: {'class_name': $('#class_name').val(),
+        };
+        function bindEditClass() {
+            $('.modal_edit').click(function () {
+                // 获取当前行的所有兄弟节点
+                var row = $(this).parent().prevAll();
+                // 改变编辑框的默认值
+                var cls_name= $(row[0]).text();
+                var class_id = $(row[1]).text();
+                $('#editModal').modal({
+                    keyboard: true,
+                });
+                $('#new_class_name').val(cls_name);
+                $('#class_id').text(class_id);
+            })
+        };
+        function bindAddSubmit(){
+            $('#ajax_add_submit').click(function () {
+                $.ajax({
+                    // 往哪提交
+                    url:'/model-add-class/',
+                    // 以什么方式提交
+                    type: 'POST',
+                    // 提交的数据
+                    data: {'class_name': $('#class_name').val(),
                         'teacher_id':$('#teacher_id').val()
-                },
-                success: function (data) {
-                    var $res = JSON.parse(data)
-                    // 当服务的处理完成后，返回数据时，该函数自动调用
-                    // data 代表服务的返回的值;
-                    if ($res.status){
-                        alert('添加成功');
-                        location.reload();
+                    },
+                    success: function (data) {
+                        var $res = JSON.parse(data)
+                        // 当服务的处理完成后，返回数据时，该函数自动调用
+                        // data 代表服务的返回的值;
+                        if ($res.status){
+                            alert('添加成功');
+                            location.reload();
+                        }
+                        else {
+                            $('#error_msg').text($res.message)
+                        }
                     }
-                    else {
-                        $('#error_msg').text($res.message)
-                    }
-                }
+                })
             })
-
-        }
-        function AjaxSendEdit() {
-            $.ajax({
-                // 往哪提交
-                url:'/model-edit-class/',
-                // 以什么方式提交
-                type: 'POST',
-                // 提交的数据
-                data: {
-                    'nid': $('#class_id').text(),
-                    'class_name': $('#new_class_name').val(),
-                },
-                success: function (data) {
-                    var $res = JSON.parse(data);
-                    // 当服务的处理完成后，返回数据时，该函数自动调用
-                    // data 代表服务的返回的值;
-                    if ($res.status){
-                        alert('编辑成功');
-                        location.reload();
+        };
+        function bindEditSubmit(){
+            $('#ajax_edit_submit').click(function () {
+                $.ajax({
+                    // 往哪提交
+                    url:'/model-edit-class/',
+                    // 以什么方式提交
+                    type: 'POST',
+                    // 提交的数据
+                    data: {
+                        'nid': $('#class_id').text(),
+                        'class_name': $('#new_class_name').val(),
+                    },
+                    success: function (data) {
+                        var $res = JSON.parse(data);
+                        // 当服务的处理完成后，返回数据时，该函数自动调用
+                        // data 代表服务的返回的值;
+                        if ($res.status){
+                            alert('编辑成功');
+                            location.reload();
+                        }
+                        else {
+                            $('#error_edit_msg').text($res.message)
+                        }
                     }
-                    else {
-                        $('#error_edit_msg').text($res.message)
-                    }
-                }
+                })
             })
-        }
+        };
+        function bindDelClass() {
+            $('.del_class').click(function () {
+                var row = $(this).parent().prevAll();
+                $.ajax({
+                    url:'/model-del-class/',
+                    type:'GET',
+                    data: {
+                        'nid':$(row[1]).text()
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status){
+                            alert("删除成功");
+                            location.reload();
+                        }
+                        else {
+                            alert(data.message);
+                        }
+                    }
+                })
+            })
+        };
     </script>
-</body>
-</html>
+
+{% endblock %}

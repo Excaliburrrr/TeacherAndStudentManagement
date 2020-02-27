@@ -16,8 +16,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.shortcuts import render, redirect, HttpResponse
-from .sqlhelper import Manage_Info
+from .utils import Manage_Info, verify
 import json
+import time
 
 
 def add_student(request):
@@ -59,6 +60,7 @@ def edit_student(request):
     """编辑学生信息"""
     # 1、收到编辑信息的请求
     manage = Manage_Info()
+
     if request.method == "GET":
         _id = request.GET.get('nid')
         student_info = manage.get_student_info(id=_id)
@@ -80,7 +82,7 @@ def edit_student(request):
         manage.update_student_info(_id, new_info)
         return redirect("/student/")
 
-
+@verify
 def student_info(request):
     """学生信息"""
     manage = Manage_Info()
@@ -141,6 +143,7 @@ def edit_teacher(request):
         manage.update_teacher_info(_id, new_info)
         return redirect("/teacher/")
 
+@verify
 def teacher_info(request):
     """展示所有教师信息"""
     manage = Manage_Info()
@@ -151,6 +154,7 @@ def teacher_info(request):
                   {"content":all_teacher_info, "classes": all_class}
                   )
 
+@verify
 def class_info(request):
     """展示所有班级信息"""
     manage = Manage_Info()
@@ -163,6 +167,7 @@ def get_classesinfo(request):
     manage = Manage_Info()
     ret = {"status": True, "message": None}
     try:
+        time.sleep(3)
         classes_info = manage.get_class_info()
     except Exception:
         ret["status"] = False
@@ -360,14 +365,17 @@ def model_add_class(request):
         return HttpResponse(json.dumps(ret))
 
 def model_del_class(request):
+    ret = {"status": True, "message": None}
     manage = Manage_Info()
     _id = request.GET.get("nid")
     try:
         manage.del_class_info(_id)
     except Exception as ret:
-        return HttpResponse("删除失败！")
+        ret["status"] = False
+        ret["message"] = "系统异常，删除失败"
+        return HttpResponse(json.dumps(ret))
     else:
-        return HttpResponse("OK")
+        return HttpResponse(json.dumps(ret))
 
 def model_edit_class(request):
     """编辑班级信息"""
@@ -390,6 +398,22 @@ def navi(request):
     """主页-导航"""
     return render(request, "navi.html")
 
+def layout(request):
+    return render(request, "layout.html")
+
+def login(request):
+    """简单的登陆 (不涉及数据库)"""
+    if request.method == "GET":
+        return render(request, "login.html")
+    else:
+        user_name = request.POST.get('user')
+        password = request.POST.get('pwd')
+        if user_name == "Sebuntin" and password == "654232":
+            response = redirect("/navi/")
+            response.set_signed_cookie("ticket", "qwert", salt="hhhhhh")
+            return response
+        else:
+            return redirect("/login/")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -415,5 +439,8 @@ urlpatterns = [
     path('model-edit-student/', model_edit_student),
     path('del-student/', del_student),
     path('edit-student/', edit_student),
-    path('student/', student_info)
+    path('student/', student_info),
+    path('layout/', layout),
+    path('login/', login)
+
 ]

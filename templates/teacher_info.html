@@ -1,212 +1,231 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
+
+{% extends "layout.html" %}
+
+{% block css %}
     <title>教师信息</title>
-    <link rel="stylesheet" href="../static/style.css"/>
-</head>
-<body>
-    <div class="nav">
-        <a href="/navi/" methods="GET">主页</a>
-        <a href="/add-student/" methods="GET">添加学生</a>
-        <a href="/add-teacher/" methods="GET">添加教师</a>
-        <a href="/add-class/" methods="GET">添加班级</a>
-        <a href="/student/" methods="GET">学生信息</a>
-        <a href="/teacher/" methods="GET">教师信息</a>
-        <a href="/class/" methods="GET">班级信息</a>
-    </div>
+    <link rel="stylesheet" href="/static/style.css"/>
+{% endblock %}
+
+
+{% block modal_add_content %}
+    <p>教师姓名: <input type="text" id="tech_name" name="tech_name" /></p>
+    <p>教师工号: <input type="text" id="job_id" name="job_id" /></p>
+    <p>
+        选择执教班级:
+    </p>
+    {% for class in classes %}
+        <p><input type="checkbox" name="class_id" value="{{class.id}}" /> {{class.name}}</p>
+    {% endfor %}
+    <span id="error_msg"></span>
+{% endblock %}
+
+{% block modal_edit_content %}
+    <p><input type="text" id="tech_id" name="tech_id" style="display: none" /></p>
+    <p>教师姓名: <input type="text" id="new_tech_name" name="new_tech_name" /></p>
+    <p>教师工号: <input type="text" id="new_job_id" name="new_job_id" /></p>
+    执教班级(按下ctrl可多选):
     <div>
-        <h1>教师信息</h1>
+        <div id="loading" class="loading hide">
+            <i class="fa fa-spinner fa-pulse fa-3x fa-fw margin-bottom"></i>
+        </div>
+        <select id="class_options" multiple="multiple">
+        </select>
     </div>
-    <div>
-        <input type="button" onclick="ShowModel()" value="添加" />
-    </div>
-    <div>
-        <table class="stu"  width="1200px" cellpadding="0">
+    <span id="error_edit_msg"></span>
+{% endblock %}
+
+{% block table_content %}
+    <div class="table-responsive" style="margin: 0 auto; width: 900px">
+        <div>
+            <h1>教师信息</h1>
+        </div>
+        <div class="add_button">
+            <button type="button" class="btn btn-default" id="addTecher">
+                添加教师
+            </button>
+        </div>
+        <table class="table table-condensed table-bordered table-striped table-hover ">
             <thead>
-                <tr class="stu_title" align="center">
-                    <th>序号</th>
-                    <th>姓名</th>
-                    <th>工号</th>
-                    <th>执教班级</th>
-                    <th>操作</th>
-                </tr>
+            <tr>
+                <th>序号</th>
+                <th>姓名</th>
+                <th>工号</th>
+                <th>执教班级</th>
+                <th>操作</th>
+            </tr>
             </thead>
             <tbody>
-                {% for item in content %}
-                <tr class="stu_content" height="40px">
+            {% for item in content %}
+                <tr>
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
                     <td>{{item.job_id}}</td>
                     <td>
                         {% for class in item.class_name %}
-                        <span class="box">{{class}}</span>
+                            <span class="box">{{class}}</span>
                         {% endfor %}
                     </td>
 
                     <td>
-                        <a href="/del-teacher/?nid={{item.id}}" class="del">删除</a>
+                        <a href="/del-teacher/?nid={{item.id}}" class="del"><i class="fa fa-trash-o"></i>url</a>
                         |
-                        <a class="del" onclick="AjaxDel(this)">(ajax)删除</a>
+                        <a class="delTech "> <i class="fa fa-trash-o" ></i> ajax</a>
                         |
-                        <a href="/edit-teacher/?nid={{item.id}}" class="edit">编辑</a>
+                        <a href="/edit-teacher/?nid={{item.id}}" class="edit"><i class="fa fa-edit" ></i> url</a>
                         |
-                        <a class="edit" onclick="ShowEditModel(this)">(ajax)编辑</a>
+                        <a class="edit showEditModal"> <i class="fa fa-edit" ></i> ajax</a>
                     </td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
     </div>
-    <div id="shadow" class="shadow hide"></div>
-    <div id="add_model" class="model hide">
-        <p>教师姓名: <input type="text" id="tech_name" name="tech_name" /></p>
-        <p>教师工号: <input type="text" id="job_id" name="job_id" /></p>
-        <p>
-            选择执教班级:
-        </p>
-            {% for class in classes %}
-                <p><input type="checkbox" name="class_id" value="{{class.id}}" /> {{class.name}}</p>
-            {% endfor %}
-        <p><input type="button" onclick="AjaxSendAdd()" value="提交"/></p>
-        <p><input type="button" onclick="CancelModel()" value="取消"/></p>
-        <span id="error_msg"></span>
-    </div>
-    <div id="edit_model" class="model hide">
-        <p><input type="text" id="tech_id" name="tech_id" style="display: none" /></p>
-        <p>教师姓名: <input type="text" id="new_tech_name" name="new_tech_name" /></p>
-        <p>教师工号: <input type="text" id="new_job_id" name="new_job_id" /></p>
-        执教班级(按下ctrl可多选):
-            <select id="class_options" multiple="multiple">
-            </select>
-        <p><input type="button" onclick="AjaxSendEdit()" value="提交"/></p>
-        <p><input type="button" onclick="CancelModel()" value="取消"/></p>
-        <span id="error_edit_msg"></span>
-    </div>
-    <script src="/static/jquery-1.12.4.js" ></script>
+{% endblock %}
+
+{% block js %}
     <script>
         $(function () {
-            bindAddTe();
+            bindAddTch();
+            bindAddSubmit();
+            bindEditTch();
+            bindEditSubmit();
+            bindDelTch();
         });
-        function ShowModel() {
-            document.getElementById("shadow").classList.remove("hide");
-            document.getElementById("add_model").classList.remove("hide");
-        }
-        function ShowEditModel(self) {
-            // 找到所有兄弟节点
-            var classes_info;
-            var row = $(self).parent().prevAll();
-            var old_tech_name = $(row[2]).text();
-            var old_job_id= $(row[1]).text();
-            var nid = $(row[3]).text();
-            // 获取该教师执教班级信息
-            var tech_class = $(row[0]).children();
-            console.log(tech_class);
-            document.getElementById("shadow").classList.remove("hide");
-            document.getElementById("edit_model").classList.remove("hide");
-            // 通过兄弟节点为编辑框设置默认值
-            $('#new_tech_name').val(old_tech_name);
-            $('#new_job_id').val(old_job_id);
-            $('#tech_id').val(nid);
-            // 动态添加执教班级复选框
-            $.ajax({
-                url: '/get-classesinfo/',
-                type: 'GET',
-                dataType: 'json',
-                success: function (data) {
-                    if (data.status){
-                        classes_info = data.message;
-                        $(classes_info).each(function () {
-                            var tag = document.createElement("option");
-                            tag.value = this.id;
-                            tag.innerText = this.name;
-                            $(tech_class).each(function () {
-                                // 设定原执教班级为默认已选上
-                                if (tag.innerText == this.innerText){
-                                    tag.setAttribute("selected", "selected");
-                                }
-                            });
-                            $('#class_options').append(tag);
-                        })
-                    }
-                }
-            });
-        }
-        function CancelModel() {
-            document.getElementById("shadow").classList.add("hide");
-            document.getElementById("add_model").classList.add("hide");
-            document.getElementById("edit_model").classList.add("hide");
-        }
-        function AjaxDel(self){
-            var row = $(self).parent().prevAll();
-            $.ajax({
-                url: "/model-del-teacher/",
-                type: "GET",
-                data: {
-                    "nid": $(row[2]).text()
-                },
-                success: function (data) {
-                    if (data == 'OK'){
-                        alert("删除成功!");
-                        location.href = "/teacher/";
-                    }
-                    else {
-                        alert(data);
-                    }
-                }
+        function bindAddTch() {
+            $('#addTecher').click(function(){
+                $('#addModal').modal({
+                    keboard: true,
+                })
             })
-
-        }
-        function AjaxSendAdd(){
-            var chk_value = [];
-            $('input[name="class_id"]:checked').each(function () {
-                chk_value.push($(this).val());
-            });
-            $.ajax({
-                url: "/model-add-teacher/",
-                traditional:true,
-                type: "POST",
-                data: {
-                    "name": $('#tech_name').val(),
-                    "job_id": $('#job_id').val(),
-                    "class_list": chk_value
-                },
-                dataType: "json", // JSON.parse(data)
-                success: function (data) {
-                    console.log(data);
-                    if (data.status){
-                        alert("添加成功！");
-                        location.reload();
+        };
+        function bindEditTch(){
+            $('.showEditModal').click(function () {
+                // 找到所有兄弟节点
+                var classes_info;
+                var row = $(this).parent().prevAll();
+                var old_tech_name = $(row[2]).text();
+                var old_job_id= $(row[1]).text();
+                var nid = $(row[3]).text();
+                // 获取该教师执教班级信息
+                var tech_class = $(row[0]).children();
+                // 加载 loading 模态对话框
+                // document.getElementById("shadow").classList.remove("hide");
+                document.getElementById("loading").classList.remove("hide");
+                console.log(tech_class);
+                $('#editModal').modal({
+                    keboard: true,
+                });
+                // 通过兄弟节点为编辑框设置默认值
+                $('#new_tech_name').val(old_tech_name);
+                $('#new_job_id').val(old_job_id);
+                $('#tech_id').val(nid);
+                // 动态添加执教班级复选框
+                $.ajax({
+                    url: '/get-classesinfo/',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        // 先清空已有选项
+                        $('#class_options').empty();
+                        if (data.status){
+                            classes_info = data.message;
+                            $(classes_info).each(function () {
+                                var tag = document.createElement("option");
+                                tag.value = this.id;
+                                tag.innerText = this.name;
+                                $(tech_class).each(function () {
+                                    // 设定原执教班级为默认已选上
+                                    if (tag.innerText == this.innerText){
+                                        tag.setAttribute("selected", "selected");
+                                    }
+                                });
+                                $('#class_options').append(tag);
+                            })
+                        }
+                        else{
+                            alert(data.message);
+                        }
+                        // document.getElementById('shadow').classList.add('hide');
+                        document.getElementById('loading').classList.add('hide');
                     }
-                    else {
-                        $('#error_msg').text(data.message);
+                });
+            })
+        };
+        function bindAddSubmit(){
+            $('#ajax_add_submit').click(function () {
+                var chk_value = [];
+                $('input[name="class_id"]:checked').each(function () {
+                    chk_value.push($(this).val());
+                });
+                $.ajax({
+                    url: "/model-add-teacher/",
+                    traditional:true,
+                    type: "POST",
+                    data: {
+                        "name": $('#tech_name').val(),
+                        "job_id": $('#job_id').val(),
+                        "class_list": chk_value
+                    },
+                    dataType: "json", // JSON.parse(data)
+                    success: function (data) {
+                        console.log(data);
+                        if (data.status){
+                            alert("添加成功！");
+                            location.reload();
+                        }
+                        else {
+                            $('#error_msg').text(data.message);
+                        }
                     }
-                }
+                })
             })
         }
-        function AjaxSendEdit(){
-            $.ajax({
-                url: "/model-edit-teacher/",
-                type: "POST",
-                traditional: true,
-                data: {
-                    "nid": $('#tech_id').val(),
-                    "job_id": $('#new_tech_name').val(),
-                    "name": $('#new_tech_name').val(),
-                    "tech_classes": $('#class_options').val()
-                },
-                dataType: 'json',
-                success: function (data) {
-                    if (data.status) {
-                        alert("编辑成功");
-                        location.reload();
+        function bindEditSubmit() {
+            $('#ajax_edit_submit').click(function () {
+                $.ajax({
+                    url: "/model-edit-teacher/",
+                    type: "POST",
+                    traditional: true,
+                    data: {
+                        "nid": $('#tech_id').val(),
+                        "job_id": $('#new_job_id').val(),
+                        "name": $('#new_tech_name').val(),
+                        "tech_classes": $('#class_options').val()
+                    },
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.status) {
+                            alert("编辑成功");
+                            location.reload();
+                        }
+                        else {
+                            $('#error_edit_msg').text(data.message);
+                        }
                     }
-                    else {
-                        $('#error_edit_msg').text(data.message);
+                })
+            })
+        };
+        function bindDelTch() {
+            $('.delTech').click(function () {
+                var row = $(this).parent().prevAll();
+                $.ajax({
+                    url: "/model-del-teacher/",
+                    type: "GET",
+                    data: {
+                        "nid": $(row[3]).text()
+                    },
+                    success: function (data) {
+                        if (data == 'OK'){
+                            alert("删除成功!");
+                            location.href = "/teacher/";
+                        }
+                        else {
+                            alert(data);
+                        }
                     }
-                }
+                })
             })
         }
     </script>
-</body>
-</html>
+{% endblock %}
+

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/static/plugin/font-awesome-4.7.0/css/font-awesome.css" />
+    <link rel="stylesheet" href="/static/plugin/bootstrap-3.3.7-dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/static/layout_style.css" />
+    {% block css %}{% endblock %}
+</head>
+<body>
+
+    {#此处放置编辑信息使用的的模态对话框#}
+    {#需要注意的是：模态对话框要作为body标签的直接子元素#}
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="editLabel">编辑</h4>
+                </div>
+                <div class="modal-body">
+                    {% block modal_edit_content %}
+                    {% endblock %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="ajax_edit_submit">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    {#此处放置添加信息使用的模态对话框#}
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="addLabel">添加</h4>
+                </div>
+                <div class="modal-body">
+                    {% block modal_add_content %}
+                    {% endblock %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-primary" id="ajax_edit_submit">提交</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
+
+    <div class="pg-header">
+        <div class="logo left"><a href="/navi/" style="color: #cccccc;text-decoration: none">师生管理系统</a></div>
+        <div class="profile right">
+            <img src="/static/profile.jpg" style="position: relative; width: 40px;"/>
+            <div class="user left" >
+                <p><a>个人资料</a></p>
+                <p><a>注销</a></p>
+            </div>
+        </div>
+        <div class="r-menus right">
+            <a><i class="fa fa-commenting-o" aria-hidden="true"></i> 消息</a>
+            <a><i class="fa fa-envelope-o" aria-hidden="true"></i> 邮件</a>
+        </div>
+    </div>
+
+    <div class="pg-body">
+        <div class="menus left">
+                <a href="/class/" methods="GET"><i class="fa fa-bars" aria-hidden="true"></i> 班级管理</a>
+                <a href="/teacher/" methods="GET"><i class="fa fa-bars" aria-hidden="true"></i> 教师管理</a>
+                <a href="/student/" methods="GET"><i class="fa fa-bars" aria-hidden="true"></i> 学生管理</a>
+        </div>
+        <div class="table_content left">
+            {#此处放置表格信息#}
+            {% block table_content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <script src="/static/jquery-1.12.4.js"></script>
+    <script src="/static/plugin/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+    {% block js %}{% endblock %}
+
+</body>
+</html>

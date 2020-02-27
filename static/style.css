@@ -89,7 +89,7 @@ input:hover {
     bottom: 0px;
     background-color: black;
     opacity: 0.4;
-    z-index: 999;
+    z-index: 1051;
 
 }
 
@@ -106,11 +106,20 @@ input:hover {
 }
 
 .box {
-    border: 2px red solid;
-    padding: 5px;
+    border: 1px #c0c0c0 solid;
+    padding: 4px;
 }
 
 .add_button {
     margin-top: 10px;
     margin-bottom: 10px;
+}
+
+.loading {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    margin-top: 20px;
+    margin-left: -230px;
+    z-index: 1060;
 }

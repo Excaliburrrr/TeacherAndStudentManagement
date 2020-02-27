@@ -1,22 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>导航栏</title>
-    <link rel="stylesheet" href="../static/style.css"/>
-</head>
-<body>
-    <div class="nav">
-        <a href="/navi/" methods="GET">主页</a>
-        <a href="/add-student/" methods="GET">添加学生</a>
-        <a href="/add-teacher/" methods="GET">添加教师</a>
-        <a href="/add-class/" methods="GET">添加班级</a>
-        <a href="/student/" methods="GET">学生信息</a>
-        <a href="/teacher/" methods="GET">教师信息</a>
-        <a href="/class/" methods="GET">班级信息</a>
-    </div>
-    <div>
-        <h1>欢迎进入师生管理系统</h1>
-    </div>
-</body>
-</html>
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title>导航栏</title>#}
+{#    <link rel="stylesheet" href="../static/style.css"/>#}
+{#</head>#}
+{#<body>#}
+{#    <div class="nav">#}
+{#        <a href="/navi/" methods="GET">主页</a>#}
+{#        <a href="/add-student/" methods="GET">添加学生</a>#}
+{#        <a href="/add-teacher/" methods="GET">添加教师</a>#}
+{#        <a href="/add-class/" methods="GET">添加班级</a>#}
+{#        <a href="/student/" methods="GET">学生信息</a>#}
+{#        <a href="/teacher/" methods="GET">教师信息</a>#}
+{#        <a href="/class/" methods="GET">班级信息</a>#}
+{#    </div>#}
+{% extends "layout.html" %}
+{% block table_content %}
+    <h1 style="position: absolute; left: 287px; top: 232px; font-size: 52px">欢迎进入师生管理系统</h1>
+{% endblock %}
+{#</body>#}
+{#</html>#}

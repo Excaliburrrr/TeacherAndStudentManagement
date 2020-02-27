@@ -1,97 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>导航栏</title>
+{% extends "layout.html" %}
+
+{% block css %}
+    <title>学生管理</title>
     <link rel="stylesheet" href="/static/style.css"/>
-    <link rel="stylesheet" href="/static/plugin/bootstrap-3.3.7-dist/css/bootstrap.css"/>
-    <link rel="stylesheet" href="/static/plugin/font-awesome-4.7.0/css/font-awesome.css" />
-</head>
-<body>
-<!--导航栏-->
-    <div class="nav">
-        <a href="/navi/" methods="GET">主页</a>
-        <a href="/add-student/" methods="GET">添加学生</a>
-        <a href="/add-teacher/" methods="GET">添加教师</a>
-        <a href="/add-class/" methods="GET">添加班级</a>
-        <a href="/student/" methods="GET">学生信息</a>
-        <a href="/teacher/" methods="GET">教师信息</a>
-        <a href="/class/" methods="GET">班级信息</a>
-    </div>
-    <div>
-        <h1>学生信息</h1>
-    </div>
-    <div class="add_button">
-        <button type="button" class="btn btn-default" id="add_stu"> 添加学生 </button>
-    </div>
+{% endblock %}
 
-    <div class="modal fade" id="addStuModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">添加学生</h4>
-                </div>
-                <div class="modal-body">
-                    <p> 姓名: <input type="text" id="stu_name" name="stu_name"></p>
-                    <p> 学号: <input type="text" id="stu_id" name="stu_id"></p>
-                    <p> 班级:
-                        <select id="class_name" name="class_name">
-                            {% for item in classes %}
-                                <option value="{{item.name}}">{{item.name}}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="ajax_add_submit">提交</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
 
-    <div class="modal fade" id="editStuModal" tabindex="-1" role="dialog" aria-labelledby="editStuLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="editStuLabel">编辑学生信息</h4>
-                </div>
-                <div class="modal-body">
-                    <p> 姓名: <input type="text" id="new_stu_name" name="stu_name"></p>
-                    <p> 班级:
-                        <select id="new_class_id" name="class_id">
-                            {% for item in classes %}
-                            <option value="{{item.id}}">{{item.name}}</option>
-                            {% endfor %}
-                        </select>
-                    </p>
-                    <input type="text" style="display: none" name="cur_stu_id" id="cur_stu_id" />
-                    <input type="text" style="display: none" name="cur_id" id="cur_id" />
-                    <span id="edit_error_msg"></span>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                    <button type="button" class="btn btn-primary" id="ajax_edit_submit">提交</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-striped table-condensed table-hover" >
+{% block table_content %}
+    <div class="table-responsive" style="margin: 0 auto; width: 800px">
+        <!--页面标题-->
+        <div>
+            <h1>学生信息</h1>
+        </div>
+        <!--添加按钮-->
+        <div class="add_button">
+            <button type="button" class="btn btn-default" id="add_stu"> 添加学生 </button>
+        </div>
+        <table class="table table-striped table-condensed table-bordered table-hover" >
             <thead>
-                <tr>
-                    <th>序号</th>
-                    <th>姓名</th>
-                    <th>学号</th>
-                    <th>班级</th>
-                    <th>操作</th>
-                </tr>
+            <tr>
+                <th>序号</th>
+                <th>姓名</th>
+                <th>学号</th>
+                <th>班级</th>
+                <th>操作</th>
+            </tr>
             </thead>
             <tbody>
-                {% for item in content %}
+            {% for item in content %}
                 <tr>
                     <td>{{item.id}}</td>
                     <td>{{item.name}}</td>
@@ -99,26 +35,52 @@
                     <td>{{item.class_name}}</td>
                     <td style="display: none">{{item.class_id}}</td>
                     <td>
-                        <a href="/del-student/?nid={{item.id}}" class="del">(url)删除</a>
+                        <a href="/del-student/?nid={{item.id}}" class="del fa fa-trash-o"></a>
                         |
-                    <!-- 注意这里的href后面如果有指定链接，
-                    则在执行完onclick指定的JS函数后，会跳转到href指定的页面，这是一个默认事件
-                    如果需要阻止默认事件发生，需要在JS函数前加上 return 关键字，
-                    并在函数体内 return false-->
-                        <a class="ajax_del del" >(ajax)删除</a>
+                        <!-- 注意这里的href后面如果有指定链接，
+                        则在执行完onclick指定的JS函数后，会跳转到href指定的页面，这是一个默认事件
+                        如果需要阻止默认事件发生，需要在JS函数前加上 return 关键字，
+                        并在函数体内 return false-->
+                        <a class="ajax_del del fa fa-trash-o" >ajax</a>
                         |
-                        <a href="/edit-student/?nid={{item.id}}" class="edit">(url)编辑</a>
+                        <a href="/edit-student/?nid={{item.id}}" class="edit fa fa-edit"></a>
                         |
-                        <a href="/edit-student/?nid={{item.id}}" class="model_edit">(ajax)编辑</a>
+                        <a href="/edit-student/?nid={{item.id}}" class="model_edit fa fa-edit">ajax</a>
                     </td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
             </tbody>
         </table>
     </div>
-    <div id="shadow" class="shadow hide"></div>
-    <script src="/static/jquery-1.12.4.js"></script>
-    <script src="/static/plugin/bootstrap-3.3.7-dist/js/bootstrap.js"></script>
+{% endblock %}
+
+{% block modal_edit_content %}
+    <p> 姓名: <input type="text" id="new_stu_name" name="stu_name"></p>
+    <p> 班级:
+        <select id="new_class_id" name="class_id">
+            {% for item in classes %}
+                <option value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+    </p>
+    <input type="text" style="display: none" name="cur_stu_id" id="cur_stu_id" />
+    <input type="text" style="display: none" name="cur_id" id="cur_id" />
+    <span id="edit_error_msg"></span>
+{% endblock %}
+
+{% block modal_add_content %}
+    <p> 姓名: <input type="text" id="stu_name" name="stu_name"></p>
+    <p> 学号: <input type="text" id="stu_id" name="stu_id"></p>
+    <p> 班级:
+        <select id="class_name" name="class_name">
+            {% for item in classes %}
+                <option value="{{item.name}}">{{item.name}}</option>
+            {% endfor %}
+        </select>
+    </p>
+{% endblock %}
+
+{% block js %}
     <script>
         $(function () {
             bindAddStu();
@@ -128,12 +90,8 @@
             bindAjaxDel();
         });
         function bindAddStu(){
-            // $('#add_stu').click(function () {
-            //     document.getElementById("shadow").classList.remove("hide");
-            //     document.getElementById("add_model").classList.remove("hide");
-            // });
             $('#add_stu').click(function(){
-                $('#addStuModal').modal({
+                $('#addModal').modal({
                     keyboard: false,
                 });
             });
@@ -188,11 +146,9 @@
                 var stu_id = $(row[2]).text();
                 var old_name = $(row[3]).text();
                 var old_class_id = $(row[0]).text();
-                $('#editStuModal').modal({
+                $('#editModal').modal({
                     keyboard: true,
                 });
-                // document.getElementById("shadow").classList.remove("hide");
-                // document.getElementById("edit_model").classList.remove("hide");
                 $('#new_stu_name').val(old_name);
                 $('#cur_id').val(nid);
                 $('#cur_stu_id').val(stu_id);
@@ -229,5 +185,4 @@
             })
         };
     </script>
-</body>
-</html>
+{% endblock %}

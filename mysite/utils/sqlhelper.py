@@ -1,7 +1,7 @@
 # _*_ coding: utf-8 _*_
 # Author: Sebuntin
 # Time: 18:58
-# Name: sqlhelper.py
+# Name: utils.py
 
 from sqlalchemy import Column, VARCHAR, Integer, create_engine, DATE, func
 from sqlalchemy.orm import sessionmaker
